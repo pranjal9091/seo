@@ -1,0 +1,25 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: omnigeo-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - SITE_URL=https://omnigeo.example.com
+      - FRONTEND_ORIGIN=https://omnigeo.example.com
+      - DATABASE_URL=sqlite:////data/omnigeo.db
+      - GA4_MEASUREMENT_ID=${GA4_MEASUREMENT_ID:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY:-}
+    volumes:
+      # Persistent named volume ensures SQLite database survives container restarts/upgrades
+      - omnigeo_data:/data
+
+volumes:
+  omnigeo_data:
+    driver: local
